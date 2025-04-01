@@ -57,7 +57,7 @@ for i in range(num_p):
     # "--start={} --end={} --index={} --gpu_index {} --outdir {}".format(start, end, index, gpu_index_str, outdir)
     # command = "python eagle/ge_data/my_ge_data_all_llama2chat.py " \
     # "--start={} --end={} --index={} --gpu_index {} --outdir {}".format(start, end, index, gpu_index_str, outdir)
-    command = "python eagle/ge_data/my_ge_data_all_llama2chat.py " \
+    command = "python /home/xwwen/EAGLE_test/EAGLE/eagle/ge_data/my_ge_data_all_llama2chat.py" \
     "--start={} --end={} --index={} --gpu_index {} --outdir {}".format(start, end, index, gpu_index_str, outdir)
     commands.append(command)
 

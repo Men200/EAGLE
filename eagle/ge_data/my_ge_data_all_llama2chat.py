@@ -6,7 +6,7 @@ parser.add_argument('--start', type=int, default=0)
 parser.add_argument('--end', type=int, default=100) # 定义数据集的选取范围（0-100）
 parser.add_argument('--index', type=int, default=1) # 传进来的其实是GPU的编号，似乎用来命名？
 parser.add_argument('--gpu_index', type=int, nargs='+', default=[1])
-parser.add_argument('--outdir', type=str, default='/home/xwwen/EAGLE_test/training_data/')
+parser.add_argument('--outdir', type=str, default='/home/xwwen/EAGLE_test/training_data')
 args = parser.parse_args()
 import os
 
@@ -20,7 +20,7 @@ from datasets import load_dataset, Dataset
 from fastchat.model.model_adapter import get_conversation_template
 
 # llama2-chat-7B权重路径
-bigname = "/home/xwwen/EAGLE_test/Llama-2-7b-chat-hf/"
+bigname = "/home/xwwen/Llama-2-7b-chat-hf"
 
 
 import pandas as pd # datasets.load_dataset()用不了就改成pandas.read_json()
@@ -30,11 +30,11 @@ def build_dataset_rank(
         select=None,
 ):
     # 加载JSON格式的ShareGPT数据集
-    # file_path = "/home/xwwen/EAGLE_test/ShareGPT_dataset/computer_en_26k.jsonl"
-    # file_path = "/home/xwwen/EAGLE_test/ShareGPT_dataset/converted.json"
-    file_path = "/home/xwwen/EAGLE_test/ShareGPT_dataset/cleaned.jsonl"
+    # file_path = "/home/xwwen/EAGLE/ShareGPT_dataset/computer_en_26k.jsonl"
+    # file_path = "/home/xwwen/EAGLE/ShareGPT_dataset/converted.json"
+    file_path = "/home/xwwen/EAGLE_test/EAGLE/ShareGPT_dataset/cleaned.jsonl"
 
-    # ds = load_dataset("shareAI/ShareGPT-Chinese-English-90k", cache_dir="/home/xwwen/EAGLE_test/ShareGPT_dataset")
+    # ds = load_dataset("shareAI/ShareGPT-Chinese-English-90k", cache_dir="/home/xwwen/ShareGPT_dataset")
     ds = load_dataset('json', data_files=file_path)
 
     # df = pd.read_json(file_path, lines=True)
@@ -160,20 +160,20 @@ bigtokenizer = AutoTokenizer.from_pretrained(bigname,use_fast=False)
 ds = build_dataset_rank(bigtokenizer)
 print(ds) # 至此就已经完成了数据集的构建
 
-'''启用4-bit NF4量化，最节省显存'''
-quantization_config = BitsAndBytesConfig(
-    load_in_4bit=True,
-    bnb_4bit_compute_dtype=torch.bfloat16, # 若GPU不支持bfloat16，改用torch.float16
-    bnb_4bit_use_double_quant=True,
-    bnb_4bit_quant_type="nf4", # Normalized Float 4
-)
-bigmodel = AutoModelForCausalLM.from_pretrained(
-    bigname,
-    quantization_config=quantization_config,
-    device_map="auto"
-)
+# '''启用4-bit NF4量化，最节省显存'''
+# quantization_config = BitsAndBytesConfig(
+#     load_in_4bit=True,
+#     bnb_4bit_compute_dtype=torch.bfloat16, # 若GPU不支持bfloat16，改用torch.float16
+#     bnb_4bit_use_double_quant=True,
+#     bnb_4bit_quant_type="nf4", # Normalized Float 4
+# )
+# bigmodel = AutoModelForCausalLM.from_pretrained(
+#     bigname,
+#     quantization_config=quantization_config,
+#     device_map="auto"
+# )
 
-# bigmodel = AutoModelForCausalLM.from_pretrained(bigname,  device_map="auto",torch_dtype=torch.float16)
+bigmodel = AutoModelForCausalLM.from_pretrained(bigname,  device_map="auto",torch_dtype=torch.float16)
 
 bigmodel.eval() # 让模型进行推理
 
